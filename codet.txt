@@ -1,0 +1,51 @@
+function haha() {
+    var domain = 'cafef.vn';
+    var offs_form = 1;
+    var offs_to = 20;
+    var token = 'RBk4jOzzCoXIlXxvdsFfAB6bW8r7xOrLNF7knIu2OAO8zvWRlfDEc9mfEUVm';
+    var retun = [];
+    var y = offs_form ;
+    var check_time = 0;
+    for (var i = offs_form; i <= offs_to; i++) {
+        setTimeout(function () {
+            var sd =  (parseInt(y)-1) * 1024;
+            var formURL = 'https://bigdata.coccoc.com/api/top_keywords?hostname=' + domain + '&limit=1024&offset=' + sd + '&token=' + token;
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var da = JSON.parse(this.responseText);
+                    var llop_p = da.paid_keywords;
+                    var llop = da.organic_query;
+                    if (retun.length == 0) {
+                        retun = da;
+                    } else {
+                        for (var j = 0; j < llop.length; j++) {
+                            retun.organic_query.push(llop[j]);
+                        }
+                        for (var j = 0; j < llop_p.length; j++) {
+                            retun.paid_keywords.push(llop_p[j]);
+                        }
+                    }
+
+                }
+            };
+            xhttp.open("GET", formURL, true);
+            xhttp.send();
+            y++;
+        }, 100 + parseInt(check_time) * 1000);
+        check_time++;
+    }
+    setTimeout(function () {
+        var data = "text/csv;charset=utf-8," + JSON.stringify(retun);
+        var a = document.createElement('a');
+        a.href = 'data:' + data;
+        a.download = 'data.json';
+        a.innerHTML = 'Tải về....';
+
+        var container = document.getElementById('root');
+        container.appendChild(a);
+    }, 60000);
+    return  true;
+}
+
+haha();
